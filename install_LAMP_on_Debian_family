@@ -1,0 +1,249 @@
+#!/bin/bash
+#echo "Hello World"
+apt-get update 
+apt-get install apache2 -y
+apt-get install mysql-server -y 
+apt-get install php -y
+#this script install   apache. Mysql. Php
+
+По простому:
+Ubuntu:
+sudo tasksel install lamp-server
+
+CentOS:
+yum install httpd php php-mysql mariadb-server -y
+
+По простому:
+#!/bin/bash
+if test -f "/usr/bin/yum"; then  echo CentOS && ;yum install httpd php php-mysql mariadb-server -y else echo “not CentOS!!!”  fi
+test -f "/usr/bin/tasksel" && echo UBUNTU && sudo tasksel install lamp-server
+Echo install complite or unknown linux
+
+
+
+
+
+sudo tasksel install lamp-server
+yum install httpd php php-mysql mariadb-server -y
+
+
+
+
+Для CentOS можно так: если посложному:
+Все файлы должны быть в домашней папке пользователя : leo
+По следующему пути: /home/leo/Desktop/scripts/
+-----------------------------------------------------------------------------------------------------------------------
+Файл: lamp_install.sh
+-----------------------------------------------------------------------------------------------------------------------
+#!/bin/bash
+clear
+source /home/leo/Desktop/scripts/lamp_script/lamp_status.sh
+lamp_status
+
+httpd_count=$(rpm -qa | grep httpd | wc -l)
+maria_count=$(rpm -qa | grep maria | wc -l)
+php_count=$(rpm -qa | grep php | wc -l)
+
+printf "\n"
+echo "-----------------------------------------------"
+printf "Beginning LAMP install...\n"
+echo "-----------------------------------------------"
+printf "\n"
+
+#CONDITION TO INSTALL HTTPD
+if [ $httpd_count == 0 ]
+then
+        #Install httpd with -Y parameter
+        sudo yum install httpd -y -q -e 0
+else
+        printf "httpd install failed...\n"
+fi
+
+#CONDITION TO INSTALL MARIA DB
+if [ $maria_count == 0 ]
+then
+        sudo yum install mariadb-server mariadb -y -q -e 0
+else
+        printf "maria install failed...\n"
+fi
+
+#CONDITION TO INSTALL PHP
+if [ $php_count == 0 ]
+then
+        sudo yum install php php-mysql -y -q -e 0
+else
+        printf "php install failed...\n"
+fi
+
+source /home/leo/Desktop/scripts/lamp_script/lamp_status.sh
+lamp_status
+
+
+
+-----------------------------------------------------------------------------------------------------------------------
+Файл: lamp_status.sh
+-----------------------------------------------------------------------------------------------------------------------
+#!/bin/bash
+function lamp_status {
+printf "\n"
+printf "Detecting installed components...\n"
+printf "\n"
+httpd_count=$(rpm -qa | grep httpd | wc -l)
+maria_count=$(rpm -qa | grep maria | wc -l)
+php_count=$(rpm -qa | grep php | wc -l)
+#Condition if httpd components are not installed
+if [ $httpd_count == 0 ]
+then
+        printf "httpd components are not installed...\n"
+else
+        printf "httpd components detected...\n"
+        for ((count=1; count<=$httpd_count; count++)); do
+                printf `rpm -qa | grep httpd | sed -n "${count}p"`
+                printf "\n"
+        done
+fi
+#Condition if mariadb components are not installed
+if [ $maria_count == 0 ]
+then
+        printf "mariadb components are not installed...\n"
+else
+        printf "\n"
+        printf "mariadb components detected...\n"
+        for ((count=1; count<=$maria_count; count++)); do
+                printf `rpm -qa | grep maria | sed -n "${count}p"`
+                printf "\n"
+        done
+fi
+#Condition if php components are not installed
+if [ $php_count == 0 ]
+then
+        printf "php components are not installed...\n"
+else
+        printf "\n"
+        printf "php components detected...\n"
+        for ((count=1; count<=$php_count; count++)); do
+                printf `rpm -qa | grep php | sed -n "${count}p"`
+                printf "\n"
+        done
+fi
+printf "\n"}
+
+
+-----------------------------------------------------------------------------------------------------------------------
+Файл: lamp_check.sh
+-----------------------------------------------------------------------------------------------------------------------
+#!/bin/bash
+
+printf "\n"
+echo "-----------------------------------------------"
+printf "Detecting installed components...\n"
+echo "-----------------------------------------------"
+printf "\n"
+
+httpd_count=$(rpm -qa | grep httpd | wc -l)
+maria_count=$(rpm -qa | grep maria | wc -l)
+php_count=$(rpm -qa | grep php | wc -l)
+
+#Condition if httpd components are not installed
+if [ $httpd_count == 0 ]
+then
+        printf "httpd components are not installed...\n"
+else
+        printf "httpd components detected...\n"
+        for ((count=1; count<=$httpd_count; count++)); do
+                printf `rpm -qa | grep httpd | sed -n "${count}p"`
+                printf "\n"
+        done
+fi
+
+#Condition if mariadb components are not installed
+if [ $maria_count == 0 ]
+then
+        printf "\n"
+        printf "mariadb components are not installed...\n"
+else
+        printf "\n"
+        printf "mariadb components detected...\n"
+        for ((count=1; count<=$maria_count; count++)); do
+                printf `rpm -qa | grep maria | sed -n "${count}p"`
+                printf "\n"
+        done
+fi
+
+#Condition if php components are not installed
+if [ $php_count == 0 ]
+then
+        printf "\n"
+        printf "php components are not installed...\n"
+else
+        printf "\n"
+        printf "php components detected...\n"
+        for ((count=1; count<=$php_count; count++)); do
+			printf `rpm -qa | grep php | sed -n "${count}p"`
+            printf "\n"
+        done
+fi
+
+printf "\n"
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------
+Файл: lamp_uninstall.sh
+-----------------------------------------------------------------------------------------------------------------------
+
+
+
+
+#!/bin/bash
+
+clear
+
+#SET VARIABLES FOR EACH COMPONENT INSTALLED AS A COUNT
+httpd_count=$(rpm -qa | grep httpd | wc -l)
+maria_count=$(rpm -qa | grep maria | wc -l)
+php_count=$(rpm -qa | grep php | wc -l)
+
+printf "\n"
+echo "-----------------------------------------------"
+printf "Detecting if LAMP install exists...\n"
+echo "-----------------------------------------------"
+
+printf "httpd components installed...\n"
+rpm -qa | grep httpd
+
+printf "\n"
+printf "maria components installed...\n"
+rpm -qa | grep maria
+
+printf "\n"
+printf "php components installed...\n"
+rpm -qa | grep php
+
+echo "-----------------------------------------------"
+printf "Begin LAMP Removal\n"
+echo "-----------------------------------------------"
+
+httpd_comp=$(rpm -qa | grep httpd | sed -n "${count}p")
+maria_comp=$(rpm -qa | grep maria | sed -n "${count}p")
+php_comp=$(rpm -qa | grep php | sed -n "${count}p")
+
+#DETECT IF HTTPD COMPONENTS ARE INSTALLED
+yum remove httpd-tools-2.4.6-45.el7.centos.4.x86_64 -y -q -e 0
+#yum remove httpd-2.4.6-45.el7.centos.4.x86_64 -y -q -e 0
+yum remove mariadb-libs-5.5.52-1.el7.x86_64 -y -q -e 0
+#yum remove mariadb-5.5.52-1.el7.x86_64 -y -q -e 0
+#yum remove mariadb-server-5.5.52-1.el7.x86_64 -y -q -e 0
+#yum remove php-5.4.16-42.el7.x86_64 -y -q -e 0
+yum remove php-common-5.4.16-42.el7.x86_64 -y -q -e 0
+#yum remove php-mysql-5.4.16-42.el7.x86_64 -y -q -e 0
+#yum remove php-pdo-5.4.16-42.el7.x86_64 -y -q -e 0
+
+#CALL LAMP_STATUS SCRIPT AGAIN TO CHECK LAMP COMPONENTS POST REMOVAL
+source /home/leo/Desktop/scripts/lamp_script/lamp_status.sh
+lamp_status
